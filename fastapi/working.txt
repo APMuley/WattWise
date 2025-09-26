@@ -1,0 +1,31 @@
+React Native APP
+    - Will work as UI for client
+    - Functionalities 
+        - Adding a tenant
+        - Adding a photo of light meter to be deciphered and stored
+        - Get a measure of the amount to be taken
+        - Draft a message based on light bill
+    
+OpenCV model
+    - Trained on photos of light meters
+    - Will only retrieve the numbers from the light bill
+    - seperate from server
+
+FastAPI
+    - Endpoint for all APIs
+    - Connected to everything
+    - Functionalities
+        - Add a tenant to database
+        - Add a photo to database
+        - Give photo to model
+        - Make sure with client that the number given my model matches
+        - Logic for amount to be paid
+        - Give information to google sheet API for easy access and viewing
+
+PostgreSQl database
+    - Stored tenant and light meter details
+    - Retrieve a certain months details 
+
+Google Sheet API
+    - Make a sheet with new months details
+    - Fill them up with proper information
