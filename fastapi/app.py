@@ -1,18 +1,20 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from sqlalchemy.orm import Session
 from database import get_db
-import schema
+from schemas import CreateReading, CreateTenant, GetReading
 import models
+
 # ROUTES ONLY BUSINESS LOGIC ON OTHER FILE
 app = FastAPI()
+
 
 # post request for creating a tenant
 # returns the tenant json object as response
 @app.post(
     '/create_tenant', 
-    response_model=schema.CreateTenant
+    response_model=CreateTenant
 )
-async def create_tenant(tenant: schema.CreateTenant, db:Session = Depends(get_db)):
+async def create_tenant(tenant: CreateTenant, db:Session = Depends(get_db)):
 
     # create a new row of tenant with passed in attribute values
     new_tenant = models.Tenant(**tenant.dict())
@@ -23,15 +25,37 @@ async def create_tenant(tenant: schema.CreateTenant, db:Session = Depends(get_db
 
     return new_tenant
 
+
 # post request for creating a new light meter reading
 # returns the new light meter bill reading
 @app.post(
     '/create_reading',
-    response_model=schema.CreateReading
+    response_model=CreateReading
 )
-async def create_reading(reading: schema.CreateReading, db:Session = Depends(get_db)):
+async def create_reading(reading: CreateReading, db:Session = Depends(get_db)):
 
     # create a new reading instance
     new_reading = models.MeterReading(**reading.dict())
 
-    
+    db.add(new_reading)
+    db.commit()
+    db.refresh(new_reading)
+
+    return new_reading
+
+
+# test the given image by supplying image to model and 
+# retrieving result
+@app.get(
+    '/read_image',
+    response_model=GetReading
+)
+async def get_reading(image: UploadFile = File(...)):
+    # read contents of image and give them to model
+    content = await image.read()
+
+    # TO IMPLEMENT MODEL API
+
+    # return reading of the image
+    return GetReading(reading=1)
+
