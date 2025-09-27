@@ -1,11 +1,24 @@
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from sqlalchemy.orm import Session
+from typing import List
 from database import get_db
-from schemas import CreateReading, CreateTenant, GetReading
+from schemas import CreateReading, CreateTenant, GetReading, TenantSchema
 import models
 
 # ROUTES ONLY BUSINESS LOGIC ON OTHER FILE
 app = FastAPI()
+
+
+# get request for getting all tenants
+# returns all tenants as a list
+@app.get(
+    '/get_tenants',
+    response_model=List[TenantSchema]
+)
+async def get_tenants(db:Session = Depends(get_db)):
+
+    tenants = db.query(models.Tenant).all()
+    return tenants
 
 
 # post request for creating a tenant

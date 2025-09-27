@@ -2,6 +2,14 @@ from pydantic import BaseModel
 from typing import Optional 
 from datetime import date
 
+# schema for a tenant
+class TenantSchema(BaseModel):
+    tenant_id: Optional[int]
+    tenant_name: str
+
+    class Config:
+        orm_mode=True
+
 # schema for create tenant request
 class CreateTenant(BaseModel):
     tenant_name: str
