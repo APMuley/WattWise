@@ -1,5 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 
+// information about user to be fetched 
+// and displayed here
 const Profile = () => {
 
     return (

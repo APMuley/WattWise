@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, LargeBinary
 
 # tenant table
 class Tenant(Base):
@@ -16,3 +16,4 @@ class MeterReading(Base):
     reading = Column(Float, nullable=False)
     tenant_id = Column(Integer, ForeignKey('tenants.tenant_id'), nullable=False)
     date = Column(Date, nullable=False)
+    image = Column(LargeBinary)

@@ -11,21 +11,12 @@ class TenantSchema(BaseModel):
         orm_mode=True
 
 # schema for create tenant request
-class CreateTenant(BaseModel):
+class CreatedTenant(BaseModel):
     tenant_name: str
 
-    class Config:
-        orm_mode=True
-
-
 # schema for the create reading request
-class CreateReading(BaseModel):
-    reading: float
-    tenant_id: int
-    date: date
-
-    class Config:
-        orm_mode=True
+class CreatedReading(BaseModel):
+    result: str
         
 
 # schema for the create reading request

@@ -1,13 +1,27 @@
-from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
+from fastapi import FastAPI, HTTPException, Depends, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from typing import List
 from database import get_db
-from schemas import CreateReading, CreateTenant, GetReading, TenantSchema
-import models
+from datetime import date
+from schemas import *
+from models import *
 
 # ROUTES ONLY BUSINESS LOGIC ON OTHER FILE
 app = FastAPI()
 
+
+# get request for one tenant only
+@app.get(
+    '/get_tenant/{tenant_id}',
+    response_model=TenantSchema
+)
+async def get_tenant(tenant_id : int, db:Session = Depends(get_db)):
+    tenant = db.query(Tenant).filter(Tenant.tenant_id == tenant_id).first()
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+
+    print(tenant)
+    return tenant
 
 # get request for getting all tenants
 # returns all tenants as a list
@@ -17,7 +31,7 @@ app = FastAPI()
 )
 async def get_tenants(db:Session = Depends(get_db)):
 
-    tenants = db.query(models.Tenant).all()
+    tenants = db.query(Tenant).all()
     return tenants
 
 
@@ -25,12 +39,12 @@ async def get_tenants(db:Session = Depends(get_db)):
 # returns the tenant json object as response
 @app.post(
     '/create_tenant', 
-    response_model=CreateTenant
+    response_model=CreatedTenant
 )
-async def create_tenant(tenant: CreateTenant, db:Session = Depends(get_db)):
+async def create_tenant(tenant: CreatedTenant, db:Session = Depends(get_db)):
 
     # create a new row of tenant with passed in attribute values
-    new_tenant = models.Tenant(**tenant.dict())
+    new_tenant = Tenant(**tenant.dict())
 
     db.add(new_tenant)
     db.commit()
@@ -43,23 +57,33 @@ async def create_tenant(tenant: CreateTenant, db:Session = Depends(get_db)):
 # returns the new light meter bill reading
 @app.post(
     '/create_reading',
-    response_model=CreateReading
+    response_model=CreatedReading
 )
-async def create_reading(reading: CreateReading, db:Session = Depends(get_db)):
+async def create_reading(reading: float = Form(...), reading_date: str = Form(...), tenant_id: int = Form(...), image: UploadFile = File(...), db:Session = Depends(get_db)):
+    # create date object to be stored
+    date_obj = date.fromisoformat(reading_date)
+
+    content = await image.read()
 
     # create a new reading instance
-    new_reading = models.MeterReading(**reading.dict())
+    new_reading = MeterReading(
+        reading=reading,
+        date=date_obj, 
+        tenant_id=tenant_id,
+        image=content
+    )
+
 
     db.add(new_reading)
     db.commit()
     db.refresh(new_reading)
 
-    return new_reading
+    return CreatedReading(result="created a reading")
 
 
 # test the given image by supplying image to model and 
 # retrieving result
-@app.get(
+@app.post(
     '/read_image',
     response_model=GetReading
 )
@@ -70,5 +94,5 @@ async def get_reading(image: UploadFile = File(...)):
     # TO IMPLEMENT MODEL API
 
     # return reading of the image
-    return GetReading(reading=1)
+    return GetReading(reading=1) 
 
