@@ -45,6 +45,7 @@ app-example
 /ios
 /android
 
-/ocr/venv
+
 /fastapi/.env
-/ocr/
+
+.env

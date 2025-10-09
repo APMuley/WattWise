@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, UploadFile, File, Form
 from sqlalchemy.orm import Session
 import requests
 from typing import List
-from database import get_db
+from database import get_db, Base, engine
 from datetime import date
 from schemas import *
 from models import *
@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
+Base.metadata.create_all(bind=engine)
 
 # ROUTES ONLY BUSINESS LOGIC ON OTHER FILE
 app = FastAPI()

@@ -11,7 +11,7 @@ password = os.getenv("PASSWORD")
 db = os.getenv("DATABASE_NAME")
 
 # database URL
-SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@localhost:5432/{db}"
+SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:5432/{db}"
 
 # connect to database using the engine and URL
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
