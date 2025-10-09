@@ -47,3 +47,4 @@ app-example
 
 /ocr/venv
 /fastapi/.env
+/ocr/

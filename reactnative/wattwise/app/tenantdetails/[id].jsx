@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, Image, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 // details page so user can take a picture and 
 // make a request to server to store photo get bill etc.
@@ -19,7 +19,7 @@ export default function TenantDetail() {
   useEffect(() => {
     const fetchTenant = async () => {
       try {
-        const response = await fetch(`http://IP_ADDRESS:8000/get_tenant/${tenant_id}`);
+        const response = await fetch(`http://192.168.31.124:8000/get_tenant/${tenant_id}`);
 
         if (!response.ok) {
           console.log("couldn't fetch tenant properly")
@@ -76,7 +76,7 @@ export default function TenantDetail() {
     })
 
     try {
-      const response = await fetch('http://IP_ADDRESS:8000/read_image',
+      const response = await fetch('http://192.168.31.124:8000/read_image',
         {
           method: 'POST',
           body: formData
@@ -84,6 +84,7 @@ export default function TenantDetail() {
 
       // set reading equal to result from request
       const result = await response.json();
+      console.log(result.reading.toString());
       setReading(result.reading.toString());
     } catch (error) {
       console.log(error.message);
@@ -111,7 +112,7 @@ export default function TenantDetail() {
     
 
     try {
-      const response = await fetch("http://IP_ADDRESS:8000/create_reading",
+      const response = await fetch("http://192.168.31.124:8000/create_reading",
       {
         method: 'POST',
         body: formData
@@ -129,6 +130,12 @@ export default function TenantDetail() {
   if (loading) return <Text>Loading tenant...</Text>;
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss} accessible={false}>
+    <View style={{ flex: 1 }}>
     <View style={styles.container}>
       {/* tenant name */}
       <Text style={styles.title}>{tenant.tenant_name}</Text>
@@ -150,10 +157,14 @@ export default function TenantDetail() {
       {/* reading extracted from image */}
       <TextInput
         style={styles.readingInput}
-        value={reading}
-        editable={false}          
+        value={reading}         
         selectTextOnFocus={false} 
         placeholder="reading"
+        onChangeText={text => setReading(text)} 
+        keyboardType="numeric"
+        returnKeyType="done"
+        blurOnSubmit={true}
+        onSubmitEditing={() => Keyboard.dismiss()}
       />
 
       {/* set date to today */}
@@ -169,6 +180,9 @@ export default function TenantDetail() {
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </View>
+    </View>
+    </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 

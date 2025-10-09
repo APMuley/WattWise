@@ -15,7 +15,7 @@ export default function TenantsLayout() {
         options={{ title: "Tenants" }}
       />
       <Stack.Screen
-        name="[id]"
+        name="[id]" 
         options={{ title: "Tenant Details" }}
       />
     </Stack>

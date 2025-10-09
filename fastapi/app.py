@@ -1,14 +1,20 @@
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File, Form
 from sqlalchemy.orm import Session
+import requests
 from typing import List
 from database import get_db
 from datetime import date
 from schemas import *
 from models import *
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 # ROUTES ONLY BUSINESS LOGIC ON OTHER FILE
 app = FastAPI()
-
+OCR_SPACE_API_KEY = os.getenv("API_KEY")
 
 # get request for one tenant only
 @app.get(
@@ -89,10 +95,29 @@ async def create_reading(reading: float = Form(...), reading_date: str = Form(..
 )
 async def get_reading(image: UploadFile = File(...)):
     # read contents of image and give them to model
-    content = await image.read()
+    contents = await image.read()
+    print("calling api....")
+    # send image to api
+    response = requests.post(
+        "https://api.ocr.space/parse/image",
+        files={"filename": contents},
+        data={"apikey": OCR_SPACE_API_KEY, "language": "eng", "OCREngine": 2}
+    )
+    result = response.json()
+    text = ""
+    if result["IsErroredOnProcessing"] == False:
+        parsed_results = result.get("ParsedResults")
+        if parsed_results:
+            text = parsed_results[0]["ParsedText"]
 
-    # TO IMPLEMENT MODEL API
+    # extract numbers only
+    import re
+    match = re.search(r'\d+(\.\d+)?', text)
+    if match:
+        number = float(match.group())
+    else:
+        number = 0.0  
 
     # return reading of the image
-    return GetReading(reading=1) 
+    return GetReading(reading=number) 
 
