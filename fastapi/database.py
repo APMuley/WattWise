@@ -1,0 +1,32 @@
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+username = os.getenv("USERNAME")
+password = os.getenv("PASSWORD")
+db = os.getenv("DATABASE_NAME")
+
+# database URL
+SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:5432/{db}"
+
+# connect to database using the engine and URL
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+
+# make a session when connecting to database
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# a base model for all the classes in database
+Base = declarative_base()
+
+# function connects to database and yields to caller
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
