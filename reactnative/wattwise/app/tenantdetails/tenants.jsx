@@ -13,7 +13,7 @@ const Tenants = () => {
     useEffect(() => {
         const fetchTenants = async () => {
             try {
-                const response = await fetch('http://192.168.31.124:8000/get_tenants');
+                const response = await fetch('http://IP_ADDRESS:8000/get_tenants');
 
                 if (!response.ok) {
                     alert("hey error!");
