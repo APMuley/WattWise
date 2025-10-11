@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 import requests
 from typing import List
-from database import get_db
+from database import get_db, Base, engine
 from datetime import date, datetime
 from schemas import *
 from models import *
@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
+Base.metadata.create_all(bind=engine)
 
 # ROUTES ONLY BUSINESS LOGIC ON OTHER FILE
 app = FastAPI()
