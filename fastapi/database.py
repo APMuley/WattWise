@@ -6,12 +6,13 @@ import os
 
 load_dotenv()
 
-username = os.getenv("USERNAME")
-password = os.getenv("PASSWORD")
-db = os.getenv("DATABASE_NAME")
+#username = os.getenv("USERNAME")
+#password = os.getenv("PASSWORD")
+#db = os.getenv("DATABASE_NAME")
+db_url = os.getenv("DATABASE_URL")
 
 # database URL
-SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:5432/{db}"
+SQLALCHEMY_DATABASE_URL = f"{db_url}"
 
 # connect to database using the engine and URL
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
