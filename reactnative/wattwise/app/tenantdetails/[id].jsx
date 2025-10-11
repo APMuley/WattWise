@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, Image, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Button, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 // details page so user can take a picture and 
 // make a request to server to store photo get bill etc.
@@ -13,7 +13,9 @@ export default function TenantDetail() {
   const [loading, setLoading] = useState(true);
   const [photo, setPhoto] = useState(null);
   const [reading, setReading] = useState(0);
+  const [multiplier, setMultiplier] = useState(13);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
 
   // immediately fetches tenant details when page is rendered
   useEffect(() => {
@@ -105,6 +107,7 @@ export default function TenantDetail() {
     formData.append("tenant_id", tenant.tenant_id.toString());
     formData.append("reading_date", date);
     formData.append("reading", reading.toString());
+    formData.append("multiplier", multiplier);
 
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
@@ -135,6 +138,7 @@ export default function TenantDetail() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss} accessible={false}>
+    <ScrollView>
     <View style={{ flex: 1 }}>
     <View style={styles.container}>
       {/* tenant name */}
@@ -176,11 +180,25 @@ export default function TenantDetail() {
         selectTextOnFocus={false}
       />
 
+      {/* setting a mulitplier to multiply the units by */}
+      <TextInput
+        style={styles.readingInput}
+        value={multiplier}         
+        selectTextOnFocus={false} 
+        placeholder="multiplier"
+        onChangeText={text => setMultiplier(text)} 
+        keyboardType="numeric"
+        returnKeyType="done"
+        blurOnSubmit={true}
+        onSubmitEditing={() => Keyboard.dismiss()}
+      />
+
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </View>
     </View>
+    </ScrollView>
     </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );

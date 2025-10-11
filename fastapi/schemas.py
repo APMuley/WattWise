@@ -25,3 +25,29 @@ class GetReading(BaseModel):
 
     class Config:
         orm_mode=True
+
+# schema for posting a bill
+class CreateBill(BaseModel):
+    multiplier : int
+    tenant_id: int
+    month: int
+    year: int
+    reading: float
+
+    class Config:
+        orm_mode=True
+
+# schema for bills
+class BillSchema(BaseModel):
+    id: int
+    tenant_id: int
+    month:int
+    year: int
+    bill: float
+    tenant_name: str
+
+    class Config:
+        orm_mode = True
+
+class TenantNumber(BaseModel):
+    num: int
