@@ -21,7 +21,7 @@ export default function TenantDetail() {
   useEffect(() => {
     const fetchTenant = async () => {
       try {
-        const response = await fetch(`http://192.168.31.124:8000/get_tenant/${tenant_id}`);
+        const response = await fetch(`http://IP_ADDRESS:8000/get_tenant/${tenant_id}`);
 
         if (!response.ok) {
           console.log("couldn't fetch tenant properly")
@@ -78,7 +78,7 @@ export default function TenantDetail() {
     })
 
     try {
-      const response = await fetch('http://192.168.31.124:8000/read_image',
+      const response = await fetch('http://IP_ADDRESS:8000/read_image',
         {
           method: 'POST',
           body: formData
@@ -115,7 +115,7 @@ export default function TenantDetail() {
     
 
     try {
-      const response = await fetch("http://192.168.31.124:8000/create_reading",
+      const response = await fetch("http://IP_ADDRESS:8000/create_reading",
       {
         method: 'POST',
         body: formData
