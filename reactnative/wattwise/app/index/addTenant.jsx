@@ -14,7 +14,7 @@ const AddTenants = () => {
 
 
         try {
-            const response = await fetch("http://192.168.31.124:8000/create_tenant", {
+            const response = await fetch("http://IP_ADDRESS:8000/create_tenant", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
